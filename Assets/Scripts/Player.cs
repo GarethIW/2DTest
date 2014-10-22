@@ -21,28 +21,37 @@ public class Player : MonoBehaviour {
     public LayerMask rayMask;
     public float groundedCheckDist = 1;
 
-    private float Speed = 10;
+    public float Speed = 10;
+
+    private float turntarget = 15f;
 
     void FixedUpdate() {
         //Input
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
- 
-        isGrounded = Physics.Raycast (transform.position, -transform.up, groundedCheckDist, rayMask);
+
+        if (h > 0f) turntarget = -15f;
+        if (h < 0f) turntarget = 15f;
+
+        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(turntarget, 15f, 1f), 0.25f);
+
+        //isGrounded = Physics.Raycast (transform.position, -transform.up, groundedCheckDist, rayMask);
         Speed = walkSpeed;//Input.GetButton("Run") ? runSpeed : walkSpeed;
        
                 //Rotation Handling
-        transform.rotation = Quaternion.Euler(Vector3.up * Camera.main.transform.localEulerAngles.y);
+        //transform.rotation = Quaternion.Euler(Vector3.up * Camera.main.transform.localEulerAngles.y);
  
                 //Movement and jumping
-        rigidbody.velocity = transform.TransformDirection (new Vector3 (h, 0, v).normalized) * Speed + (Vector3.up * ((Input.GetButtonDown ("Jump") && isGrounded) ? jumpForce : rigidbody.velocity.y));
+        rigidbody.velocity = transform.TransformDirection(new Vector3(h, 0, v).normalized)*Speed;// + (Vector3.up * ((Input.GetButtonDown ("Jump") && isGrounded) ? jumpForce : rigidbody.velocity.y));
  
-        if(isGrounded == false)
-        {
-            rigidbody.AddRelativeForce(new Vector3(Input.GetAxis("Horizontal") * airControl, 0, Input.GetAxis("Vertical") * airControl));
-        }
+        //if(isGrounded == false)
+        //{
+        //    rigidbody.AddRelativeForce(new Vector3(Input.GetAxis("Horizontal") * airControl, 0, Input.GetAxis("Vertical") * airControl));
+        //}
  
                 //Limit speed to max
         rigidbody.velocity = Mathf.Clamp (rigidbody.velocity.magnitude, 0, SpeedLimit) * rigidbody.velocity.normalized;
+
+
     }
 }
