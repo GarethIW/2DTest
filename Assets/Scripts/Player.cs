@@ -15,7 +15,7 @@ public class Player : MonoBehaviour {
     public float jumpForce = 200;
     public float wallJumpForce = 200;
     public float wallJumpForceUp = 200;
-    public float SpeedLimit = 0.0001f;
+    public float SpeedLimit = 1f;
     public bool isGrounded = false;
 
     public LayerMask rayMask;
@@ -23,17 +23,17 @@ public class Player : MonoBehaviour {
 
     public float Speed = 10;
 
-    private float turntarget = 15f;
+    private float turntarget = 12f;
 
     void FixedUpdate() {
         //Input
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
 
-        if (h > 0f) turntarget = -15f;
-        if (h < 0f) turntarget = 15f;
+        if (h > 0f) turntarget = -12f;
+        if (h < 0f) turntarget = 12f;
 
-        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(turntarget, 15f, 1f), 0.25f);
+        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(turntarget, 12f, 1f), 0.25f);
 
         //isGrounded = Physics.Raycast (transform.position, -transform.up, groundedCheckDist, rayMask);
         Speed = walkSpeed;//Input.GetButton("Run") ? runSpeed : walkSpeed;
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour {
         //}
  
                 //Limit speed to max
-        rigidbody.velocity = Mathf.Clamp (rigidbody.velocity.magnitude, 0, SpeedLimit) * rigidbody.velocity.normalized;
+       // rigidbody.velocity = Mathf.Clamp (rigidbody.velocity.magnitude, 0, SpeedLimit) * rigidbody.velocity.normalized;
 
 
     }
