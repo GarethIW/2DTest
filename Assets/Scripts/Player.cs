@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
@@ -23,7 +24,16 @@ public class Player : MonoBehaviour {
 
     public float Speed = 10;
 
+    public Transform Sprite;
+
+    public Collider CurrentTrigger;
+
+
     private float turntarget = 12f;
+
+    private float hintAlpha = 0f;
+
+    
 
     void FixedUpdate() {
         //Input
@@ -33,7 +43,7 @@ public class Player : MonoBehaviour {
         if (h > 0f) turntarget = -12f;
         if (h < 0f) turntarget = 12f;
 
-        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(turntarget, 12f, 1f), 0.25f);
+        Sprite.localScale = Vector3.Lerp(Sprite.transform.localScale, new Vector3(turntarget, 12f, 1f), 0.25f);
 
         //isGrounded = Physics.Raycast (transform.position, -transform.up, groundedCheckDist, rayMask);
         Speed = walkSpeed;//Input.GetButton("Run") ? runSpeed : walkSpeed;
@@ -52,6 +62,66 @@ public class Player : MonoBehaviour {
                 //Limit speed to max
        // rigidbody.velocity = Mathf.Clamp (rigidbody.velocity.magnitude, 0, SpeedLimit) * rigidbody.velocity.normalized;
 
+        if (hintAlpha > 0f) hintAlpha -= 0.1f;
+        hintAlpha = Mathf.Clamp(hintAlpha, 0f, 1f);
+        transform.FindChild("Hint UI/Hint").GetComponent<Text>().color = Color.white*hintAlpha;
 
+        if (Input.GetButtonDown("Use"))
+        {
+            Use();
+        }
+    }
+
+    public void Use()
+    {
+        if (CurrentTrigger == null) return;
+
+        switch (CurrentTrigger.name)
+        {
+            case "LadderTop":
+                //transform.position = CurrentTrigger.transform.position;
+                transform.position = GameObject.Find("LadderBottom").transform.position;
+                break;
+            case "LadderBottom":
+                //transform.position = CurrentTrigger.transform.position;
+                transform.position = GameObject.Find("LadderTop").transform.position;
+                break;
+            case "Stairs1Top":
+                //transform.position = CurrentTrigger.transform.position;
+                transform.position = GameObject.Find("Stairs1Bottom").transform.position;
+                break;
+            case "Stairs1Bottom":
+                //transform.position = CurrentTrigger.transform.position;
+                transform.position = GameObject.Find("Stairs1Top").transform.position;
+                break;
+        }
+    }
+
+    public void OnTriggerStay(Collider trigger)
+    {
+        switch(trigger.name)
+        {
+            case "LadderTop":
+            case "LadderBottom":
+                HintText("Use Ladder");
+                break;
+            case "Stairs1Top":
+            case "Stairs1Bottom":
+                HintText("Use Stairs");
+                break;
+        }
+
+        CurrentTrigger = trigger;
+    }
+
+    public void OnTriggerExit(Collider trigger)
+    {
+        CurrentTrigger = null;
+    }
+
+    public void HintText(string text)
+    {
+        transform.FindChild("Hint UI/Hint").GetComponent<Text>().text = text;
+        hintAlpha +=0.2f;
     }
 }
