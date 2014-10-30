@@ -297,6 +297,8 @@ namespace tk2dRuntime.TileMap
 				tileMap.renderData = tk2dUtil.CreateGameObject(tileMap.name + " Render Data");
 	
 			tileMap.renderData.transform.position = tileMap.transform.position;
+		    tileMap.renderData.transform.parent = tileMap.transform.parent;
+		    tileMap.renderData.layer = tileMap.gameObject.layer;
 			
 			float accumulatedLayerZ = 0.0f;
 			
@@ -321,7 +323,7 @@ namespace tk2dRuntime.TileMap
 				}
 				
 				int unityLayer = tileMap.data.Layers[layerId].unityLayer;
-				
+
 				if (layer.gameObject != null)
 				{
 #if UNITY_3_5
@@ -336,7 +338,7 @@ namespace tk2dRuntime.TileMap
 					layer.gameObject.transform.localPosition = new Vector3(0, 0, tileMap.data.layersFixedZ ? (-layerInfoZ) : accumulatedLayerZ);
 					layer.gameObject.transform.localRotation = Quaternion.identity;
 					layer.gameObject.transform.localScale = Vector3.one;
-					layer.gameObject.layer = unityLayer;
+				    layer.gameObject.layer = tileMap.gameObject.layer; //unityLayer;
 				}
 				
 				int x0, x1, dx;
@@ -366,6 +368,7 @@ namespace tk2dRuntime.TileMap
 							string chunkName = "Chunk " + y.ToString() + " " + x.ToString();
 							var go = chunk.gameObject = tk2dUtil.CreateGameObject(chunkName);
 							go.transform.parent = layer.gameObject.transform;
+						    //go.layer = layer.gameObject.layer;
 							
 							// render mesh
 							MeshFilter meshFilter = tk2dUtil.AddComponent<MeshFilter>(go);
@@ -381,7 +384,7 @@ namespace tk2dRuntime.TileMap
 							chunk.gameObject.transform.localPosition = tilePosition;
 							chunk.gameObject.transform.localRotation = Quaternion.identity;
 							chunk.gameObject.transform.localScale = Vector3.one;
-							chunk.gameObject.layer = unityLayer;
+						    chunk.gameObject.layer = layer.gameObject.layer;//unityLayer;
 							
 							// We won't be generating collider data in edit mode, so clear everything
 							if (editMode)
